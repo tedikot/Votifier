@@ -52,9 +52,8 @@ namespace unturned.ROCKS.Votifier
 
                 }
                 else { 
-                    ChatManager.say(m.SteamId, "You have not voted for this server today, please visit unturned-servers.net to do so and come back to claim your reward!");
+                    ChatManager.say(m.SteamId, "You have not voted for this server today, please visit unturned-servers.net to do so.");
                 }
-                Logger.Log(result);
             }
             catch (Exception e)
             {

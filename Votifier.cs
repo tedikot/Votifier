@@ -20,8 +20,8 @@ namespace unturned.ROCKS.Votifier
             try
             {
                 Configuration = (Configuration)(new Configuration()).LoadConfiguration();
-                Core.RegisterCommand(new CommandReward("reward"));
-                Core.RegisterCommand(new CommandReward("vote"));
+                Commands.RegisterCommand(new CommandReward("reward"));
+                Commands.RegisterCommand(new CommandReward("vote"));
             }
             catch (Exception ex)
             {
