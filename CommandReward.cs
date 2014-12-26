@@ -33,9 +33,9 @@ namespace unturned.ROCKS.Votifier
 
                     bool success = true;
 
-                    foreach (KeyValuePair<ushort,byte> item in Votifier.Configuration.Rewards)
+                    foreach (Reward reward in Votifier.Configuration.Rewards)
                     {
-                        if (!ItemTool.tryForceGiveItem(steamPlayer.Player, item.Key, item.Value))
+                        if (!ItemTool.tryForceGiveItem(steamPlayer.Player, reward.ItemId, reward.Amount))
                         {
                             success = false;
                         }
