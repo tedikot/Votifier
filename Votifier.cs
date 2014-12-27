@@ -20,7 +20,7 @@ namespace unturned.ROCKS.Votifier
         {
             try
             {
-                Configuration = (Configuration)(new Configuration()).LoadConfiguration();
+                Configuration = RocketConfiguration.LoadConfiguration<Configuration>();
                 if (!Configuration.Enabled) return;
                 Commands.RegisterCommand(new CommandReward("reward"));
                 Commands.RegisterCommand(new CommandReward("vote"));
