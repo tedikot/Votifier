@@ -37,30 +37,7 @@ namespace unturned.ROCKS.Votifier
             String result = new WebClient().DownloadString(String.Format("http://unturned-servers.net/api/?object=votes&element=claim&key={0}&steamid={1}", Votifier.Configuration.ServerKey, id.ToString()));
             if (result == "1")
             {
-                SteamPlayer steamPlayer = null;
-                SteamPlayerlist.tryGetSteamPlayer(id.ToString(), out steamPlayer);
-                string playerName = steamPlayer.Player.name;
-                ChatManager.say(String.Format("{0} voted for this server on unturned-servers.net and got a reward.", playerName));
-
-                bool success = true;
-
-                foreach (Reward reward in Votifier.Configuration.Rewards)
-                {
-                    if (!ItemTool.tryForceGiveItem(steamPlayer.Player, reward.ItemId, reward.Amount))
-                    {
-                        success = false;
-                    }
-                }
-
-                if (success)
-                {
-                    new WebClient().DownloadString(String.Format("http://unturned-servers.net/api/?action=post&object=votes&element=claim&key={0}&steamid={1}", Votifier.Configuration.ServerKey, id.ToString()));
-                }
-                else
-                {
-                    Logger.Log(String.Format("Failed giving a item to {0}", playerName));
-                }
-
+                ChatManager.say(id, "You voted for the server, type /reward to receive your reward.");
             }
             else
             {
