@@ -64,7 +64,8 @@ namespace unturned.ROCKS.Votifier
             }
             else
             {
-                ChatManager.say(id, "Vote for this server on unturned-servers.net and get a reward! Type /reward to receive the reward.");
+                ChatManager.say(id, "Vote for this server on unturned-servers.net and get a reward!");
+                ChatManager.say(id, "Type /reward to receive the reward after you voted.");
             }
         }
 
