@@ -14,13 +14,12 @@ namespace unturned.ROCKS.Votifier
 {
     public class Votifier : RocketPlugin
     {
-        public static Configuration Configuration;
+        public static Configuration Configuration = RocketConfiguration.LoadConfiguration<Configuration>();
 
         public void Load() 
         {
             try
             {
-                Configuration = RocketConfiguration.LoadConfiguration<Configuration>();
                 if (!Configuration.Enabled) return;
                 Commands.RegisterCommand(new CommandReward("reward"));
                 Commands.RegisterCommand(new CommandReward("vote"));
