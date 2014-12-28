@@ -9,7 +9,6 @@ namespace unturned.ROCKS.Votifier
 {
     public class Configuration : RocketConfiguration
     {
-        public bool Enabled = false;
         public string ServerKey = "ServerKeyHere";
         public List<Reward> Rewards = new List<Reward>() { new Reward(18,1) };
     }
