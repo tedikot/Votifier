@@ -9,6 +9,8 @@ using System.IO;
 using System.Reflection;
 using Rocket.RocketAPI;
 using System.Net;
+using System.Collections;
+using System.Diagnostics;
 
 namespace unturned.ROCKS.Votifier
 {
@@ -35,8 +37,6 @@ namespace unturned.ROCKS.Votifier
 
         public void checkVote(CSteamID id)
         {
-            if (!players.Contains(id.ToString()))
-            {
                 players.Add(id.ToString());
 
                 String result = new WebClient().DownloadString(String.Format("http://unturned-servers.net/api/?object=votes&element=claim&key={0}&steamid={1}", Votifier.Configuration.ServerKey, id.ToString()));
