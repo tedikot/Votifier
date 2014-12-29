@@ -37,18 +37,17 @@ namespace unturned.ROCKS.Votifier
 
         public void checkVote(CSteamID id)
         {
-                players.Add(id.ToString());
+            players.Add(id.ToString());
 
-                String result = new WebClient().DownloadString(String.Format("http://unturned-servers.net/api/?object=votes&element=claim&key={0}&steamid={1}", Votifier.Configuration.ServerKey, id.ToString()));
-                if (result == "1")
-                {
-                    ChatManager.say(id, "You voted for the server, type /reward to receive your reward.");
-                }
-                else
-                {
-                    ChatManager.say(id, "Vote for this server on unturned-servers.net and get a reward!");
-                    ChatManager.say(id, "Type /reward to receive the reward after you voted.");
-                }
+            String result = new WebClient().DownloadString(String.Format("http://unturned-servers.net/api/?object=votes&element=claim&key={0}&steamid={1}", Votifier.Configuration.ServerKey, id.ToString()));
+            if (result == "1")
+            {
+                ChatManager.say(id, "You voted for the server, type /reward to receive your reward.");
+            }
+            else
+            {
+                ChatManager.say(id, "Vote for this server on unturned-servers.net and get a reward!");
+                ChatManager.say(id, "Type /reward to receive the reward after you voted.");
             }
         }
 
