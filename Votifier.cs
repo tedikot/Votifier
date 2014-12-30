@@ -23,9 +23,9 @@ namespace unturned.ROCKS.Votifier
             try
             {
                 Configuration = RocketConfiguration.LoadConfiguration<Configuration>();
-                Commands.RegisterCommand(new CommandReward("reward"));
-                Commands.RegisterCommand(new CommandReward("vote"));
-                SDG.Steam.serverConnected += checkVote;
+                RocketAPI.Commands.RegisterCommand(new CommandReward("reward"));
+                RocketAPI.Commands.RegisterCommand(new CommandReward("vote"));
+                RocketAPI.Events.PlayerConnected += checkVote;
             }
             catch (Exception ex)
             {

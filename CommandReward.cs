@@ -8,26 +8,24 @@ using System.Text;
 
 namespace unturned.ROCKS.Votifier
 {
-    class CommandReward : Command
+    class CommandReward : RocketCommand
     {
 
-        public CommandReward(String exec)
+        public CommandReward(String name)
         {
-            base.commandName = exec;
-            base.commandInfo = "";
-            base.commandHelp = "";
+            this.name = name;
         }
 
-        protected override void execute(SteamPlayerID m, string D)
+        public void Execute(SteamPlayerID caller, string command)
         {
             try
             {
-                String result = new WebClient().DownloadString(String.Format("http://unturned-servers.net/api/?object=votes&element=claim&key={0}&steamid={1}", Votifier.Configuration.ServerKey, m.SteamId.ToString()));
+                String result = new WebClient().DownloadString(String.Format("http://unturned-servers.net/api/?object=votes&element=claim&key={0}&steamid={1}", Votifier.Configuration.ServerKey, caller.SteamId.ToString()));
                 if (result == "1")
                 {
                     SteamPlayer steamPlayer = null;
-                   
-                    SteamPlayerlist.tryGetSteamPlayer(m.SteamId.ToString(), out steamPlayer);
+
+                    SteamPlayerlist.tryGetSteamPlayer(caller.SteamId.ToString(), out steamPlayer);
                     string playerName = steamPlayer.Player.name;
                     ChatManager.say(String.Format("{0} voted for this server on unturned-servers.net and got a reward.", playerName));
 
@@ -43,7 +41,7 @@ namespace unturned.ROCKS.Votifier
 
                     if (success)
                     {
-                        new WebClient().DownloadString(String.Format("http://unturned-servers.net/api/?action=post&object=votes&element=claim&key={0}&steamid={1}", Votifier.Configuration.ServerKey, m.SteamId.ToString()));
+                        new WebClient().DownloadString(String.Format("http://unturned-servers.net/api/?action=post&object=votes&element=claim&key={0}&steamid={1}", Votifier.Configuration.ServerKey, caller.SteamId.ToString()));
                     }
                     else
                     {
@@ -51,8 +49,9 @@ namespace unturned.ROCKS.Votifier
                     }
 
                 }
-                else { 
-                    ChatManager.say(m.SteamId, "You have not voted for this server today, please visit unturned-servers.net to do so.");
+                else
+                {
+                    ChatManager.say(caller.SteamId, "You have not voted for this server today, please visit unturned-servers.net to do so.");
                 }
             }
             catch (Exception e)
@@ -60,7 +59,15 @@ namespace unturned.ROCKS.Votifier
                 Logger.Log(e.ToString());
             }
         }
-        
 
+        public string Help
+        {
+            get { return "Vote for the server"; }
+        }
+        private string name;
+        public string Name
+        {
+            get { return name; }
+        }
     }
 }
