@@ -20,14 +20,22 @@ namespace unturned.ROCKS.Votifier
         {
             try
             {
-                String result = new WebClient().DownloadString(String.Format("http://unturned-servers.net/api/?object=votes&element=claim&key={0}&steamid={1}", Votifier.Configuration.ServerKey, caller.SteamId.ToString()));
-                if (result == "1")
+                string unturnedServers = String.IsNullOrEmpty(Votifier.Configuration.UnturnedServers) ? "" : new WebClient().DownloadString(String.Format("http://unturned-servers.net/api/?object=votes&element=claim&key={0}&steamid={1}", Votifier.Configuration.UnturnedServers, caller.SteamId.ToString()));
+                string unturnedSL = String.IsNullOrEmpty(Votifier.Configuration.UnturnedSL) ? "" : new WebClient().DownloadString(String.Format("http://unturnedsl.com/api/dedicated/{0}/{1}", Votifier.Configuration.UnturnedSL, caller.SteamId.ToString()));
+
+                string servernames = "";
+                if (!String.IsNullOrEmpty(unturnedServers)) servernames+= "unturned-servers.net";
+                if (!String.IsNullOrEmpty(unturnedServers) && !String.IsNullOrEmpty(unturnedSL)) servernames += " or ";
+                if (!String.IsNullOrEmpty(unturnedSL)) servernames += "unturnedsl.com";
+
+                
+                if (unturnedServers == "1" || unturnedSL == "1")
                 {
                     SteamPlayer steamPlayer = null;
 
                     SteamPlayerlist.tryGetSteamPlayer(caller.SteamId.ToString(), out steamPlayer);
                     string playerName = steamPlayer.Player.name;
-                    ChatManager.say(String.Format("{0} voted for this server on unturned-servers.net and got a reward.", playerName));
+                    ChatManager.say(String.Format("{0} voted for this server on " + servernames + " and got a reward.", playerName));
 
                     bool success = true;
 
@@ -41,7 +49,8 @@ namespace unturned.ROCKS.Votifier
 
                     if (success)
                     {
-                        new WebClient().DownloadString(String.Format("http://unturned-servers.net/api/?action=post&object=votes&element=claim&key={0}&steamid={1}", Votifier.Configuration.ServerKey, caller.SteamId.ToString()));
+                        if(!String.IsNullOrEmpty(unturnedServers)) new WebClient().DownloadString(String.Format("http://unturned-servers.net/api/?action=post&object=votes&element=claim&key={0}&steamid={1}", Votifier.Configuration.UnturnedServers, caller.SteamId.ToString()));
+                        if (!String.IsNullOrEmpty(unturnedSL)) new WebClient().DownloadString(String.Format("http://unturnedsl.com/api/dedicated/post/{0}/{1}", Votifier.Configuration.UnturnedSL, caller.SteamId.ToString()));
                     }
                     else
                     {
@@ -51,7 +60,7 @@ namespace unturned.ROCKS.Votifier
                 }
                 else
                 {
-                    ChatManager.say(caller.SteamId, "You have not voted for this server today, please visit unturned-servers.net to do so.");
+                    ChatManager.say(caller.SteamId, "You have not voted for this server today, please visit " + servernames + " to do so.");
                 }
             }
             catch (Exception e)
@@ -64,6 +73,7 @@ namespace unturned.ROCKS.Votifier
         {
             get { return "Vote for the server"; }
         }
+
         private string name;
         public string Name
         {

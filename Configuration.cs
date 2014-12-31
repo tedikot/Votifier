@@ -9,7 +9,10 @@ namespace unturned.ROCKS.Votifier
 {
     public class Configuration : RocketConfiguration
     {
-        public string ServerKey = "ServerKeyHere";
+        [XmlElement(ElementName = "unturned_servers_net")]
+        public string UnturnedServers = "";
+        [XmlElement(ElementName = "unturnedsl_com")]
+        public string UnturnedSL = "";
         public List<Reward> Rewards = new List<Reward>() { new Reward(18,1) };
     }
     public class Reward{
