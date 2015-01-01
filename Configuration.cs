@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 namespace unturned.ROCKS.Votifier
 {
-    public class Configuration : RocketConfiguration
+    public class Configuration
     {
         [XmlElement(ElementName = "unturned_servers_net")]
         public string UnturnedServers = "";
