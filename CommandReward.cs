@@ -6,6 +6,11 @@ namespace unturned.ROCKS.Votifier
 {
     class CommandReward : Command
     {
+        public CommandReward()
+        {
+            base.commandName = "reward";
+            base.commandInfo = base.commandHelp = "This is a testcommand";
+        }
 
         public CommandReward(String name)
         {
