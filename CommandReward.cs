@@ -1,28 +1,24 @@
-﻿using Rocket.RocketAPI;
-using Rocket.RocketAPI.Interfaces;
+﻿using Rocket;
 using SDG;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
 
 namespace unturned.ROCKS.Votifier
 {
-    class CommandReward : RocketCommand
+    class CommandReward : Command
     {
 
         public CommandReward(String name)
         {
-            this.name = name;
+            base.commandName = name;
+            base.commandInfo = base.commandHelp = "This is a testcommand";
         }
 
-        public void Execute(SteamPlayerID caller, string command)
+        public override void execute(SteamPlayerID caller, string command)
         {
             try
             {
-                string unturnedServers = String.IsNullOrEmpty(Votifier.Configuration.UnturnedServers) ? "" : new MyWebClient().DownloadString(String.Format("http://unturned-servers.net/api/?object=votes&element=claim&key={0}&steamid={1}", Votifier.Configuration.UnturnedServers, caller.CSteamId.ToString()));
-                string unturnedSL = String.IsNullOrEmpty(Votifier.Configuration.UnturnedSL) ? "" : new MyWebClient().DownloadString(String.Format("http://unturnedsl.com/api/dedicated/{0}/{1}", Votifier.Configuration.UnturnedSL, caller.CSteamId.ToString()));
+                string unturnedServers = String.IsNullOrEmpty(Votifier.configuration.UnturnedServers) ? "" : new MyWebClient().DownloadString(String.Format("http://unturned-servers.net/api/?object=votes&element=claim&key={0}&steamid={1}", Votifier.configuration.UnturnedServers, caller.CSteamId.ToString()));
+                string unturnedSL = String.IsNullOrEmpty(Votifier.configuration.UnturnedSL) ? "" : new MyWebClient().DownloadString(String.Format("http://unturnedsl.com/api/dedicated/{0}/{1}", Votifier.configuration.UnturnedSL, caller.CSteamId.ToString()));
 
                 string servernames = "";
                 if (!String.IsNullOrEmpty(unturnedServers)) servernames+= "unturned-servers.net";
@@ -40,7 +36,7 @@ namespace unturned.ROCKS.Votifier
 
                     bool success = true;
 
-                    foreach (Reward reward in Votifier.Configuration.Rewards)
+                    foreach (Reward reward in Votifier.configuration.Rewards)
                     {
                         if (!ItemTool.tryForceGiveItem(steamPlayer.Player, reward.ItemId, reward.Amount))
                         {
@@ -50,8 +46,8 @@ namespace unturned.ROCKS.Votifier
 
                     if (success)
                     {
-                        if (!String.IsNullOrEmpty(unturnedServers)) new MyWebClient().DownloadString(String.Format("http://unturned-servers.net/api/?action=post&object=votes&element=claim&key={0}&steamid={1}", Votifier.Configuration.UnturnedServers, caller.CSteamId.ToString()));
-                        if (!String.IsNullOrEmpty(unturnedSL)) new MyWebClient().DownloadString(String.Format("http://unturnedsl.com/api/dedicated/post/{0}/{1}", Votifier.Configuration.UnturnedSL, caller.CSteamId.ToString()));
+                        if (!String.IsNullOrEmpty(unturnedServers)) new MyWebClient().DownloadString(String.Format("http://unturned-servers.net/api/?action=post&object=votes&element=claim&key={0}&steamid={1}", Votifier.configuration.UnturnedServers, caller.CSteamId.ToString()));
+                        if (!String.IsNullOrEmpty(unturnedSL)) new MyWebClient().DownloadString(String.Format("http://unturnedsl.com/api/dedicated/post/{0}/{1}", Votifier.configuration.UnturnedSL, caller.CSteamId.ToString()));
                     }
                     else
                     {
@@ -68,17 +64,6 @@ namespace unturned.ROCKS.Votifier
             {
                 Logger.Log(e.ToString());
             }
-        }
-
-        public string Help
-        {
-            get { return "Vote for the server"; }
-        }
-
-        private string name;
-        public string Name
-        {
-            get { return name; }
         }
     }
 }

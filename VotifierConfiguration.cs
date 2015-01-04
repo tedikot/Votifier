@@ -1,13 +1,9 @@
-﻿using Rocket.RocketAPI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace unturned.ROCKS.Votifier
 {
-    public class Configuration
+    public class VotifierConfiguration
     {
         [XmlElement(ElementName = "unturned_servers_net")]
         public string UnturnedServers = "";

@@ -64,8 +64,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandReward.cs" />
-    <Compile Include="MyWebclient.cs" />
-    <Compile Include="Configuration.cs" />
+    <Compile Include="MyWebclient.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="VotifierConfiguration.cs" />
     <Compile Include="Votifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
