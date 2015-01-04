@@ -12,7 +12,7 @@ namespace unturned.ROCKS.Votifier
             base.commandInfo = base.commandHelp = "This is a testcommand";
         }
 
-        public override void execute(SteamPlayerID caller, string command)
+        protected override void execute(SteamPlayerID caller, string command)
         {
             try
             {
