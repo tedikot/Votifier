@@ -9,7 +9,7 @@ namespace unturned.ROCKS.Votifier
     {
         public static VotifierConfiguration configuration;
 
-        public void Load() 
+        protected override void Load() 
         {
             try
             {
