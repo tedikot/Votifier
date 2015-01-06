@@ -40,7 +40,7 @@ namespace unturned.ROCKS.Votifier
                         bool success = true;
                         foreach (Reward reward in Votifier.Configuration.Rewards)
                         {
-                            if (!ItemTool.tryForceGiveItem(voter.Player, reward.ItemId,(byte) reward.Amount))
+                            if (!ItemTool.tryForceGiveItem(voter.Player, reward.ItemId,reward.Amount))
                             {
                                 success = false;
                             }

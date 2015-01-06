@@ -25,7 +25,8 @@ namespace unturned.ROCKS.Votifier
 
         public Reward(){ }
 
-        public Reward(ushort itemId,int amount){
+        public Reward(ushort itemId, byte amount)
+        {
             ItemId = itemId;
             amount = Amount;
         }
@@ -34,7 +35,7 @@ namespace unturned.ROCKS.Votifier
         public ushort ItemId;
 
         [XmlAttribute("amount")]
-        public int Amount = 1;
+        public byte Amount = 1;
     }
 
     public class Service
