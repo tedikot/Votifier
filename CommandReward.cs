@@ -1,6 +1,9 @@
 ﻿using Rocket;
+using Rocket.RocketAPI;
 using SDG;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace unturned.ROCKS.Votifier
 {
@@ -16,47 +19,47 @@ namespace unturned.ROCKS.Votifier
         {
             try
             {
-                string unturnedServers = String.IsNullOrEmpty(Votifier.configuration.UnturnedServers) ? "" : new MyWebClient().DownloadString(String.Format("http://unturned-servers.net/api/?object=votes&element=claim&key={0}&steamid={1}", Votifier.configuration.UnturnedServers, caller.CSteamId.ToString()));
-                string unturnedSL = String.IsNullOrEmpty(Votifier.configuration.UnturnedSL) ? "" : new MyWebClient().DownloadString(String.Format("http://unturnedsl.com/api/dedicated/{0}/{1}", Votifier.configuration.UnturnedSL, caller.CSteamId.ToString()));
-
-                string servernames = "";
-                if (!String.IsNullOrEmpty(unturnedServers)) servernames+= "unturned-servers.net";
-                if (!String.IsNullOrEmpty(unturnedServers) && !String.IsNullOrEmpty(unturnedSL)) servernames += " or ";
-                if (!String.IsNullOrEmpty(unturnedSL)) servernames += "unturnedsl.com";
-
-                
-                if (unturnedServers == "1" || unturnedSL == "1")
+                if (Votifier.Configuration.Services.Where(s => !String.IsNullOrEmpty(s.APIKey)).Count() == 0)
                 {
-                    SteamPlayer steamPlayer = null;
-
-                    SteamPlayerlist.tryGetSteamPlayer(caller.CSteamId.ToString(), out steamPlayer);
-                    string playerName = steamPlayer.Player.name;
-                    ChatManager.say(String.Format("{0} voted for this server on " + servernames + " and got a reward.", playerName));
-
-                    bool success = true;
-
-                    foreach (Reward reward in Votifier.configuration.Rewards)
-                    {
-                        if (!ItemTool.tryForceGiveItem(steamPlayer.Player, reward.ItemId, reward.Amount))
-                        {
-                            success = false;
-                        }
-                    }
-
-                    if (success)
-                    {
-                        if (!String.IsNullOrEmpty(unturnedServers)) new MyWebClient().DownloadString(String.Format("http://unturned-servers.net/api/?action=post&object=votes&element=claim&key={0}&steamid={1}", Votifier.configuration.UnturnedServers, caller.CSteamId.ToString()));
-                        if (!String.IsNullOrEmpty(unturnedSL)) new MyWebClient().DownloadString(String.Format("http://unturnedsl.com/api/dedicated/post/{0}/{1}", Votifier.configuration.UnturnedSL, caller.CSteamId.ToString()));
-                    }
-                    else
-                    {
-                        Logger.Log(String.Format("Failed giving a item to {0}", playerName));
-                    }
-
+                    Logger.Log("No apikeys supplied."); return;
                 }
-                else
+
+                List<Service> services = Votifier.Configuration.Services.Where(s => !String.IsNullOrEmpty(s.APIKey)).ToList();
+
+
+                SteamPlayer voter = PlayerTool.getSteamPlayer(caller.CSteamID);
+                bool hasVoted = false;
+                foreach (Service service in services)
                 {
-                    ChatManager.say(caller.CSteamId, "You have not voted for this server today, please visit " + servernames + " to do so.");
+                    ServiceDefinition apidefinition = Votifier.Configuration.ServiceDefinitions.Where(s => s.Name == service.Name).FirstOrDefault();
+                    if (apidefinition == null) { Logger.Log("The API for " + service.Name + " is unknown"); return; }
+                    string result = new VotifierWebclient().DownloadString(String.Format(apidefinition.CheckHasVoted, service.APIKey, caller.CSteamID.ToString()));
+                    if (result == "1") {
+                        hasVoted = true;
+                        
+                        bool success = true;
+                        foreach (Reward reward in Votifier.Configuration.Rewards)
+                        {
+                            if (!ItemTool.tryForceGiveItem(voter.Player, reward.ItemId,(byte) reward.Amount))
+                            {
+                                success = false;
+                            }
+                        }
+                        if (success)
+                        {
+                            ChatManager.say(String.Format(voter.SteamPlayerID.CharacterName+" voted for this server on " + service.Name + " and got a reward."));
+                            new VotifierWebclient().DownloadString(String.Format(apidefinition.ReportSuccess, service.APIKey, caller.CSteamID.ToString()));
+                        }
+                        else
+                        {
+                            Logger.Log("Failed giving a item to "+voter.SteamPlayerID.CharacterName);
+                        }
+
+                    }
+                }
+                if (!hasVoted)
+                {
+                    ChatManager.say(caller.CSteamID, "You have not voted for this server today, please visit " + String.Join(",", services.Select(s => s.Name).ToArray()) + " to do so.");
                 }
             }
             catch (Exception e)

@@ -3,7 +3,7 @@ using System.Net;
 
 namespace unturned.ROCKS.Votifier
 {
-    public class MyWebClient : WebClient
+    public class VotifierWebclient : WebClient
     {
         //time in milliseconds
         private int timeout;
@@ -19,7 +19,7 @@ namespace unturned.ROCKS.Votifier
             }
         }
 
-        public MyWebClient(int timeout = 5000)
+        public VotifierWebclient(int timeout = 5000)
         {
             this.timeout = timeout;
         }

@@ -1,55 +1,51 @@
 ﻿using Rocket;
+using Rocket.RocketAPI;
 using SDG;
 using Steamworks;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace unturned.ROCKS.Votifier
 {
-    public class Votifier : RocketComponent
+    public class Votifier : RocketPlugin<VotifierConfiguration>
     {
-        public static VotifierConfiguration configuration;
+        protected override void Load() {
+            Events.OnPlayerConnected += Events_OnPlayerConnected;
+        }
 
-        protected override void Load() 
+        void Events_OnPlayerConnected(Player player)
         {
-            try
+            if (Configuration.Services.Where(s => !String.IsNullOrEmpty(s.APIKey)).Count() != 0)
             {
-                configuration = Configuration.LoadConfiguration<VotifierConfiguration>();
-                
-            }
-            catch (Exception ex)
-            {
-                Logger.Log(ex.ToString());
+                checkVote(player.SteamChannel.SteamPlayer.SteamPlayerID.CSteamID);
             }
         }
 
-        protected override void onPlayerConnected(CSteamID cSteamID)
-        {
-            if (!String.IsNullOrEmpty(configuration.UnturnedServers) || !String.IsNullOrEmpty(configuration.UnturnedSL))
-            {
-                checkVote(cSteamID);
-            }
-        }
 
         public void checkVote(CSteamID id)
         {
             try
             {
-                string unturnedServer = String.IsNullOrEmpty(Votifier.configuration.UnturnedServers) ? "" : new MyWebClient().DownloadString(String.Format("http://unturned-servers.net/api/?object=votes&element=claim&key={0}&steamid={1}", Votifier.configuration.UnturnedServers, id.ToString()));
-                string unturnedSL = String.IsNullOrEmpty(Votifier.configuration.UnturnedSL) ? "" : new MyWebClient().DownloadString(String.Format("http://unturnedsl.com/api/dedicated/{0}/{1}", Votifier.configuration.UnturnedSL, id.ToString()));
+                List<Service> services = Configuration.Services.Where(s => !String.IsNullOrEmpty(s.APIKey)).ToList();
+
+                bool hasVoted = false;
+                foreach (Service service in services)
+                {
+                    ServiceDefinition apidefinition = Votifier.Configuration.ServiceDefinitions.Where(s => s.Name == service.Name).FirstOrDefault();
+                    if (apidefinition == null) { Logger.Log("The API for " + service.Name + " is unknown"); return; }
+                    string result = new VotifierWebclient().DownloadString(String.Format(apidefinition.CheckHasVoted, service.APIKey, id.ToString()));
+                    if (result == "1") hasVoted = true;
+                }
 
 
-                string servernames = "";
-                if (!String.IsNullOrEmpty(unturnedServer)) servernames += "unturned-servers.net";
-                if (!String.IsNullOrEmpty(unturnedServer) && !String.IsNullOrEmpty(unturnedSL)) servernames += " or ";
-                if (!String.IsNullOrEmpty(unturnedSL)) servernames += "unturnedsl.com";
-
-                if (unturnedServer == "1" || unturnedSL == "1")
+                if (hasVoted)
                 {
                     ChatManager.say(id, "You voted for the server, type /reward to receive your reward.");
                 }
                 else
                 {
-                    ChatManager.say(id, "Vote for this server on " + servernames + " and get a reward!");
+                    ChatManager.say(id, "To get a reward vote for this server on:" + String.Join(",", services.Select(s => s.Name).ToArray()));
                     ChatManager.say(id, "Type /reward to receive the reward after you voted.");
                 }
             }
@@ -58,5 +54,6 @@ namespace unturned.ROCKS.Votifier
                 Logger.Log("Votifier connection timed out!");
             }
         }
-    }
+    } 
+   
 }
