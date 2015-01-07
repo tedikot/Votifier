@@ -40,7 +40,7 @@ namespace unturned.ROCKS.Votifier
         public Reward(ushort itemId, byte amount)
         {
             ItemId = itemId;
-            amount = Amount;
+            Amount = amount;
         }
 
         [XmlAttribute("itemid")]
