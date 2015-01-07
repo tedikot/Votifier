@@ -37,24 +37,20 @@ namespace unturned.ROCKS.Votifier
                     if (result == "1") {
                         hasVoted = true;
                         
-                        bool success = true;
                         foreach (Reward reward in Votifier.Configuration.Rewards)
                         {
                             if (!ItemTool.tryForceGiveItem(voter.Player, reward.ItemId,reward.Amount))
                             {
-                                success = false;
+                                voter.Player.Inventory.tryAddItem(new Item(reward.ItemId, reward.Amount), true);
+                            }
+                            else
+                            {
+                                Logger.Log("Failed giving a item to " + voter.SteamPlayerID.CharacterName + " (" + reward.ItemId + "," + reward.Amount + ")");
                             }
                         }
-                        if (success)
-                        {
-                            ChatManager.say(String.Format(voter.SteamPlayerID.CharacterName+" voted for this server on " + service.Name + " and got a reward."));
-                            new VotifierWebclient().DownloadString(String.Format(apidefinition.ReportSuccess, service.APIKey, caller.CSteamID.ToString()));
-                        }
-                        else
-                        {
-                            Logger.Log("Failed giving a item to "+voter.SteamPlayerID.CharacterName);
-                        }
-
+                        ChatManager.say(String.Format(voter.SteamPlayerID.CharacterName+" voted for this server on " + service.Name + " and got a reward."));
+                        new VotifierWebclient().DownloadString(String.Format(apidefinition.ReportSuccess, service.APIKey, caller.CSteamID.ToString()));
+                   
                     }
                 }
                 if (!hasVoted)
@@ -62,9 +58,9 @@ namespace unturned.ROCKS.Votifier
                     ChatManager.say(caller.CSteamID, "You have not voted for this server today, please visit " + String.Join(",", services.Select(s => s.Name).ToArray()) + " to do so.");
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Log(e.ToString());
+                Logger.LogException(ex);
             }
         }
     }
