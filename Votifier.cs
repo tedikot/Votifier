@@ -83,14 +83,14 @@ namespace unturned.ROCKS.Votifier
                                         Logger.Log("Failed giving a item to " + voter.SteamPlayerID.CharacterName + " (" + reward.ItemId + "," + reward.Amount + ")");
                                     }
                                 }
-                                ChatManager.say(voter.SteamPlayerID.CharacterName + " voted on " + service.Name + " and received the \"" + bundle.Name + "\" bundle");
+                                RocketChatManager.Say(voter.SteamPlayerID.CharacterName + " voted on " + service.Name + " and received the \"" + bundle.Name + "\" bundle");
                                 new VotifierWebclient().DownloadString(String.Format(apidefinition.ReportSuccess, service.APIKey, caller.ToString()));
                                 return;
                             }
                             else
                             {
-                                ChatManager.say(caller, String.Format("You have voted this server on "+service.Name));
-                                ChatManager.say(caller, String.Format("Type /reward to receive your reward."));
+                                RocketChatManager.Say(caller, String.Format("You have voted this server on " + service.Name));
+                                RocketChatManager.Say(caller, String.Format("Type /reward to receive your reward."));
                                 return;
                             }
                         case "2":
@@ -99,21 +99,18 @@ namespace unturned.ROCKS.Votifier
                     }
                 }
 
-                Logger.Log(alreadyVoted.Count+"a");
-                Logger.Log(notVoted.Count+"n");
-
                 if (alreadyVoted.Count == 0 && notVoted.Count != 0)
                 {
-                    ChatManager.say(caller, "To get a reward, vote for this server on: " + String.Join(", ", notVoted.ToArray()));
-                    ChatManager.say(caller, "Type /reward to receive the reward after you voted.");
+                    RocketChatManager.Say(caller, "To get a reward, vote for this server on: " + String.Join(", ", notVoted.ToArray()));
+                    RocketChatManager.Say(caller, "Type /reward to receive the reward after you voted.");
                 }
                 else if (alreadyVoted.Count != 0 && notVoted.Count != 0)
                 {
-                    ChatManager.say(caller, "You can still vote for this server on: " + String.Join(", ", notVoted.ToArray()));
-                    ChatManager.say(caller, "Type /reward to receive the reward after you voted.");
+                    RocketChatManager.Say(caller, "You can still vote for this server on: " + String.Join(", ", notVoted.ToArray()));
+                    RocketChatManager.Say(caller, "Type /reward to receive the reward after you voted.");
                 }
                 else {
-                    ChatManager.say(caller, "Thank you for voting, try again tomorrow.");
+                    RocketChatManager.Say(caller, "Thank you for voting, try again tomorrow.");
                 }
             }
             catch (Exception ex)
