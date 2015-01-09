@@ -12,7 +12,8 @@ namespace unturned.ROCKS.Votifier
         public CommandReward()
         {
             base.commandName = "reward";
-            base.commandInfo = base.commandHelp = "This is a testcommand";
+            base.commandHelp = "Get rewards for voting";
+            base.commandInfo = base.commandName + " - " + base.commandHelp;
         }
 
         protected override void execute(SteamPlayerID caller, string command)

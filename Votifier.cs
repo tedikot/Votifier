@@ -25,7 +25,7 @@ namespace unturned.ROCKS.Votifier
         {
             try
             {
-                if (Votifier.Configuration.Services.Where(s => !String.IsNullOrEmpty(s.APIKey)).Count() == 0)
+                if (Votifier.Configuration.Services.Where(s => !String.IsNullOrEmpty(s.APIKey)).FirstOrDefault() == null)
                 {
                     Logger.Log("No apikeys supplied."); return;
                 }
@@ -35,38 +35,85 @@ namespace unturned.ROCKS.Votifier
 
                 SteamPlayer voter = PlayerTool.getSteamPlayer(caller);
 
-                bool hasVoted = false;
+                List<string> alreadyVoted = new List<string>();
+                List<string> notVoted = new List<string>();
+
                 foreach (Service service in services)
                 {
                     ServiceDefinition apidefinition = Votifier.Configuration.ServiceDefinitions.Where(s => s.Name == service.Name).FirstOrDefault();
                     if (apidefinition == null) { Logger.Log("The API for " + service.Name + " is unknown"); return; }
                     string result = new VotifierWebclient().DownloadString(String.Format(apidefinition.CheckHasVoted, service.APIKey, caller.ToString()));
-                    if (result == "1")
+                    switch (result)
                     {
-                        hasVoted = true;
-                        if (giveItemDirectly)
-                        {
-                            foreach (Reward reward in Votifier.Configuration.Rewards)
+                        case "0":
+                            notVoted.Add(service.Name);
+                            break;
+                        case "1":
+                            if (giveItemDirectly)
                             {
-                                if (!ItemTool.tryForceGiveItem(voter.Player, reward.ItemId, reward.Amount))
+                                int propabilysum =  Votifier.Configuration.RewardBundles.Sum(p => p.Probability);
+
+                                RewardBundle bundle = new RewardBundle();
+
+                                if (propabilysum != 0)
                                 {
-                                    Logger.Log("Failed giving a item to " + voter.SteamPlayerID.CharacterName + " (" + reward.ItemId + "," + reward.Amount + ")");
+                                    Random r = new Random();
+
+                                    int i = 0, diceRoll = r.Next(0, propabilysum);
+                                    
+                                    foreach (RewardBundle b in Votifier.Configuration.RewardBundles)
+                                    {
+                                        if (diceRoll > i && diceRoll <= i + b.Probability)
+                                        {
+                                            bundle = b;
+                                            break;
+                                        }
+                                        i = i + b.Probability;
+                                    }
                                 }
+                                else {
+                                    Logger.Log("Failed finding any rewardbundles");
+                                    return;
+                                }
+
+                                foreach (Reward reward in bundle.Rewards)
+                                {
+                                    if (!ItemTool.tryForceGiveItem(voter.Player, reward.ItemId, reward.Amount))
+                                    {
+                                        Logger.Log("Failed giving a item to " + voter.SteamPlayerID.CharacterName + " (" + reward.ItemId + "," + reward.Amount + ")");
+                                    }
+                                }
+                                ChatManager.say(voter.SteamPlayerID.CharacterName + " voted on " + service.Name + " and received the \"" + bundle.Name + "\" bundle");
+                                new VotifierWebclient().DownloadString(String.Format(apidefinition.ReportSuccess, service.APIKey, caller.ToString()));
+                                return;
                             }
-                            ChatManager.say(String.Format(voter.SteamPlayerID.CharacterName + " voted for this server on " + service.Name + " and got a reward."));
-                            new VotifierWebclient().DownloadString(String.Format(apidefinition.ReportSuccess, service.APIKey, caller.ToString()));
-                        }
-                        else
-                        {
-                            ChatManager.say(caller, String.Format("You have voted this server on " + service.Name + "!"));
-                            ChatManager.say(caller, String.Format("Type /reward to receive your reward."));
-                        }
+                            else
+                            {
+                                ChatManager.say(caller, String.Format("You have voted this server on "+service.Name));
+                                ChatManager.say(caller, String.Format("Type /reward to receive your reward."));
+                                return;
+                            }
+                        case "2":
+                            alreadyVoted.Add(service.Name);
+                            break;
                     }
                 }
-                if (!hasVoted)
+
+                Logger.Log(alreadyVoted.Count+"a");
+                Logger.Log(notVoted.Count+"n");
+
+                if (alreadyVoted.Count == 0 && notVoted.Count != 0)
                 {
-                    ChatManager.say(caller, "To get a reward vote for this server on: " + String.Join(",", services.Select(s => s.Name).ToArray()));
+                    ChatManager.say(caller, "To get a reward, vote for this server on: " + String.Join(", ", notVoted.ToArray()));
                     ChatManager.say(caller, "Type /reward to receive the reward after you voted.");
+                }
+                else if (alreadyVoted.Count != 0 && notVoted.Count != 0)
+                {
+                    ChatManager.say(caller, "You can still vote for this server on: " + String.Join(", ", notVoted.ToArray()));
+                    ChatManager.say(caller, "Type /reward to receive the reward after you voted.");
+                }
+                else {
+                    ChatManager.say(caller, "Thank you for voting, try again tomorrow.");
                 }
             }
             catch (Exception ex)

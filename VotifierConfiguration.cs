@@ -6,8 +6,11 @@ namespace unturned.ROCKS.Votifier
 {
     public class VotifierConfiguration : RocketConfiguration
     {
+        [XmlArrayItem(ElementName = "Service")]
         public List<Service> Services;
-        public List<Reward> Rewards;
+        [XmlArrayItem(ElementName = "RewardBundle")]
+        public List<RewardBundle> RewardBundles;
+        [XmlArrayItem(ElementName = "ServiceDefinition")]
         public List<ServiceDefinition> ServiceDefinitions;
 
         public RocketConfiguration DefaultConfiguration
@@ -27,12 +30,29 @@ namespace unturned.ROCKS.Votifier
                     }
                 };
 
-                configuration.Rewards = new List<Reward>() { new Reward(245, 1),new Reward(81, 2),new Reward(16, 2) };
+                configuration.RewardBundles = new List<RewardBundle>() { 
+                    new RewardBundle() { Name="Survival", Rewards = new List<Reward>() { new Reward(245, 1), new Reward(81, 2), new Reward(16, 2) }, Probability = 33 },
+                    new RewardBundle() { Name="Brute Force", Rewards = new List<Reward>() { new Reward(112, 1), new Reward(113, 3), new Reward(254, 3) }, Probability = 33 },
+                    new RewardBundle() { Name="Watcher", Rewards = new List<Reward>() { new Reward(109, 1), new Reward(111, 3), new Reward(236, 3) }, Probability = 33 }
+                };
                 configuration.Services = new List<Service>() { new Service("unturned-servers.net"), new Service("unturnedsl.com") };
                 return configuration;
             }
         }
     }
+
+    public class RewardBundle
+    {
+        public RewardBundle() { }
+
+        public int Probability;
+
+        public string Name;
+
+        [XmlArrayItem(ElementName = "Reward")]
+        public List<Reward> Rewards;
+    }
+
     public class Reward{
 
         public Reward(){ }
