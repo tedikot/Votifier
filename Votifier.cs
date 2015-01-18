@@ -61,8 +61,9 @@ namespace unturned.ROCKS.Votifier
             {
                 if (voteResult.Count != 0)
                 {
-                    handleVote(voteResult[0]);
+                    VoteResult v = voteResult[0];
                     voteResult.RemoveAt(0);
+                    handleVote(v);
                 }
             }
             catch (Exception ex)
@@ -70,7 +71,7 @@ namespace unturned.ROCKS.Votifier
                 Logger.LogException(ex);
             }
         }
-
+        private static bool handling = false;
         private static List<VoteResult> voteResult = new List<VoteResult>();
 
         class VoteResult{
