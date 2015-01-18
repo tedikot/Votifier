@@ -1,5 +1,6 @@
 ﻿using Rocket;
 using Rocket.RocketAPI;
+using Rocket.RocketAPI.Managers;
 using SDG;
 using Steamworks;
 using System;
@@ -55,23 +56,6 @@ namespace unturned.ROCKS.Votifier
             }
         }
 
-        void Update()
-        {
-            try
-            {
-                if (voteResult.Count != 0)
-                {
-                    VoteResult v = voteResult[0];
-                    voteResult.RemoveAt(0);
-                    handleVote(v);
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.LogException(ex);
-            }
-        }
-        private static bool handling = false;
         private static List<VoteResult> voteResult = new List<VoteResult>();
 
         class VoteResult{
@@ -84,7 +68,12 @@ namespace unturned.ROCKS.Votifier
 
         static void wc_DownloadStringCompleted(System.Net.DownloadStringCompletedEventArgs e, CSteamID _caller, Service _service,ServiceDefinition _apidefinition, bool _giveItemDirectly)
         {
-            voteResult.Add(new VoteResult() { caller = _caller, result = e.Result, apidefinition = _apidefinition ,service = _service, giveItemDirectly = _giveItemDirectly });
+            VoteResult v = new VoteResult() { caller = _caller, result = e.Result, apidefinition = _apidefinition, service = _service, giveItemDirectly = _giveItemDirectly };
+          
+            RocketThreadManager.Enqueue(() =>
+            {
+                handleVote(v);
+            });
         }
 
         static void handleVote(VoteResult result) {
