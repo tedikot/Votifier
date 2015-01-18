@@ -57,9 +57,17 @@ namespace unturned.ROCKS.Votifier
 
         void Update()
         {
-            if (voteResult.Count != 0) {
-                handleVote(voteResult[0]);
-                voteResult.RemoveAt(0);
+            try
+            {
+                if (voteResult.Count != 0)
+                {
+                    handleVote(voteResult[0]);
+                    voteResult.RemoveAt(0);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex);
             }
         }
 
