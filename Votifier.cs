@@ -13,7 +13,7 @@ namespace unturned.ROCKS.Votifier
     {
         protected override void Load()
         {
-            Events.OnPlayerConnected += Events_OnPlayerConnected;
+            RocketServer.OnPlayerConnected += Events_OnPlayerConnected;
         }
 
         void Events_OnPlayerConnected(Player player)
