@@ -13,7 +13,7 @@ namespace unturned.ROCKS.Votifier
     {
         protected override void Load()
         {
-            RocketServer.OnPlayerConnected += Events_OnPlayerConnected;
+            RocketEvents.OnPlayerConnected += Events_OnPlayerConnected;
         }
 
         void Events_OnPlayerConnected(Player player)
@@ -70,7 +70,7 @@ namespace unturned.ROCKS.Votifier
         {
             VoteResult v = new VoteResult() { caller = _caller, result = e.Result, apidefinition = _apidefinition, service = _service, giveItemDirectly = _giveItemDirectly };
           
-            RocketThreadManager.Enqueue(() =>
+            RocketTaskManager.Enqueue(() =>
             {
                 handleVote(v);
             });
