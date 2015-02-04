@@ -1,6 +1,7 @@
 ﻿using Rocket;
+using Rocket.Logging;
 using Rocket.RocketAPI;
-using Rocket.RocketAPI.Managers;
+using Rocket.RocketAPI.Events;
 using SDG;
 using Steamworks;
 using System;
@@ -13,7 +14,7 @@ namespace unturned.ROCKS.Votifier
     {
         protected override void Load()
         {
-            RocketEvents.OnPlayerConnected += Events_OnPlayerConnected;
+            RocketServerEvents.OnPlayerConnected += Events_OnPlayerConnected;
         }
 
         void Events_OnPlayerConnected(Player player)
