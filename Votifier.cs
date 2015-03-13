@@ -12,8 +12,10 @@ namespace unturned.ROCKS.Votifier
 {
     public class Votifier : RocketPlugin<VotifierConfiguration>
     {
+        public static Votifier Instance;
         protected override void Load()
         {
+            Instance = this;
             RocketServerEvents.OnPlayerConnected += Events_OnPlayerConnected;
         }
 
@@ -44,18 +46,18 @@ namespace unturned.ROCKS.Votifier
         {
             try
             {
-                if (Votifier.Configuration.Services.Where(s => !String.IsNullOrEmpty(s.APIKey)).FirstOrDefault() == null)
+                if (Instance.Configuration.Services.Where(s => !String.IsNullOrEmpty(s.APIKey)).FirstOrDefault() == null)
                 {
-                    Logger.Log(Translate("no_apikeys_message")); return;
+                    Logger.Log(Instance.Translate("no_apikeys_message")); return;
                 }
 
-                List<Service> services = Votifier.Configuration.Services.Where(s => !String.IsNullOrEmpty(s.APIKey)).ToList();
+                List<Service> services = Instance.Configuration.Services.Where(s => !String.IsNullOrEmpty(s.APIKey)).ToList();
 
 
                 foreach (Service service in services)
                 {
-                    ServiceDefinition apidefinition = Votifier.Configuration.ServiceDefinitions.Where(s => s.Name == service.Name).FirstOrDefault();
-                    if (apidefinition == null) { Logger.Log(Translate("api_unknown_message", service.Name)); return; }
+                    ServiceDefinition apidefinition = Instance.Configuration.ServiceDefinitions.Where(s => s.Name == service.Name).FirstOrDefault();
+                    if (apidefinition == null) { Logger.Log(Instance.Translate("api_unknown_message", service.Name)); return; }
                     try
                     {
                         VotifierWebclient wc = new VotifierWebclient();
@@ -64,8 +66,8 @@ namespace unturned.ROCKS.Votifier
                     }
                     catch (TimeoutException)
                     {
-                        Logger.Log(Translate("api_down_message",service.Name));
-                        RocketChatManager.Say(caller, Translate("api_down_message", service.Name));
+                        Logger.Log(Instance.Translate("api_down_message", service.Name));
+                        RocketChatManager.Say(caller, Instance.Translate("api_down_message", service.Name));
                     }
                 }
             }
@@ -102,12 +104,12 @@ namespace unturned.ROCKS.Votifier
             switch (result.result)
             {
                 case "0":
-                    RocketChatManager.Say(result.caller, Translate("not_yet_voted",result.service.Name));
+                    RocketChatManager.Say(result.caller, Instance.Translate("not_yet_voted", result.service.Name));
                     break;
                 case "1":
                     if (result.giveItemDirectly)
                     {
-                        int propabilysum = Votifier.Configuration.RewardBundles.Sum(p => p.Probability);
+                        int propabilysum = Instance.Configuration.RewardBundles.Sum(p => p.Probability);
 
                         RewardBundle bundle = new RewardBundle();
 
@@ -117,7 +119,7 @@ namespace unturned.ROCKS.Votifier
 
                             int i = 0, diceRoll = r.Next(0, propabilysum);
 
-                            foreach (RewardBundle b in Votifier.Configuration.RewardBundles)
+                            foreach (RewardBundle b in Instance.Configuration.RewardBundles)
                             {
                                 if (diceRoll > i && diceRoll <= i + b.Probability)
                                 {
@@ -129,7 +131,7 @@ namespace unturned.ROCKS.Votifier
                         }
                         else
                         {
-                            Logger.Log(Translate("no_rewards_found"));
+                            Logger.Log(Instance.Translate("no_rewards_found"));
                             return;
                         }
 
@@ -137,20 +139,20 @@ namespace unturned.ROCKS.Votifier
                         {
                             if (!ItemTool.tryForceGiveItem(voter.Player, reward.ItemId, reward.Amount))
                             {
-                                Logger.Log(Translate("vote_give_error_message", voter.SteamPlayerID.CharacterName, reward.ItemId, reward.Amount));
+                                Logger.Log(Instance.Translate("vote_give_error_message", voter.SteamPlayerID.CharacterName, reward.ItemId, reward.Amount));
                             }
                         }
-                        RocketChatManager.Say(Translate("vote_success_message", voter.SteamPlayerID.CharacterName, result.service.Name, bundle.Name));
+                        RocketChatManager.Say(Instance.Translate("vote_success_message", voter.SteamPlayerID.CharacterName, result.service.Name, bundle.Name));
                         new VotifierWebclient().DownloadStringAsync(new Uri(String.Format(result.apidefinition.ReportSuccess, result.service.APIKey, result.caller.ToString())));
                         return;
                     }
                     else
                     {
-                        RocketChatManager.Say(result.caller, Translate("vote_pending_message", result.service.Name));
+                        RocketChatManager.Say(result.caller, Instance.Translate("vote_pending_message", result.service.Name));
                         return;
                     }
                 case "2":
-                    RocketChatManager.Say(result.caller, Translate("vote_due_message", result.service.Name));
+                    RocketChatManager.Say(result.caller, Instance.Translate("vote_due_message", result.service.Name));
                     break;
             }
         }
