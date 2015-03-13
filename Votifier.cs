@@ -17,6 +17,24 @@ namespace unturned.ROCKS.Votifier
             RocketServerEvents.OnPlayerConnected += Events_OnPlayerConnected;
         }
 
+        public override Dictionary<string, string> DefaultTranslations
+        {
+            get
+            {
+                return new Dictionary<string, string>() { 
+                    {"no_apikeys_message","No apikeys supplied."},
+                    {"api_unknown_message", "The API for {0} is unknown"},
+                    {"api_down_message","Can't reach {0}, is it down?!"},
+                    {"not_yet_voted","You have not yet voted for this server on: {0}"},
+                    {"no_rewards_found","Failed finding any rewardbundles"},
+                    {"vote_give_error_message","Failed giving a item to {0} ({1},{2})"},
+                    {"vote_success_message","{0} voted on {1} and received the \"{2}\" bundle"},
+                    {"vote_pending_message","You have an outstanding reward for your vote on {0}"},
+                    {"vote_due_message","You have already voted for this server on {0}, Thanks!"}
+                };
+            }
+        }
+
         void Events_OnPlayerConnected(Player player)
         {
             Vote(player.SteamChannel.SteamPlayer.SteamPlayerID.CSteamID,false);
@@ -28,7 +46,7 @@ namespace unturned.ROCKS.Votifier
             {
                 if (Votifier.Configuration.Services.Where(s => !String.IsNullOrEmpty(s.APIKey)).FirstOrDefault() == null)
                 {
-                    Logger.Log("No apikeys supplied."); return;
+                    Logger.Log(Translate("no_apikeys_message")); return;
                 }
 
                 List<Service> services = Votifier.Configuration.Services.Where(s => !String.IsNullOrEmpty(s.APIKey)).ToList();
@@ -37,7 +55,7 @@ namespace unturned.ROCKS.Votifier
                 foreach (Service service in services)
                 {
                     ServiceDefinition apidefinition = Votifier.Configuration.ServiceDefinitions.Where(s => s.Name == service.Name).FirstOrDefault();
-                    if (apidefinition == null) { Logger.Log("The API for " + service.Name + " is unknown"); return; }
+                    if (apidefinition == null) { Logger.Log(Translate("api_unknown_message", service.Name)); return; }
                     try
                     {
                         VotifierWebclient wc = new VotifierWebclient();
@@ -46,8 +64,8 @@ namespace unturned.ROCKS.Votifier
                     }
                     catch (TimeoutException)
                     {
-                        Logger.Log("Can't reach " + service.Name + ", is it down?!");
-                        RocketChatManager.Say(caller,"Can't reach " + service.Name + ", please try again later...");
+                        Logger.Log(Translate("api_down_message",service.Name));
+                        RocketChatManager.Say(caller, Translate("api_down_message", service.Name));
                     }
                 }
             }
@@ -84,7 +102,7 @@ namespace unturned.ROCKS.Votifier
             switch (result.result)
             {
                 case "0":
-                    RocketChatManager.Say(result.caller, "You have not yet voted for this server on: " + result.service.Name);
+                    RocketChatManager.Say(result.caller, Translate("not_yet_voted",result.service.Name));
                     break;
                 case "1":
                     if (result.giveItemDirectly)
@@ -111,7 +129,7 @@ namespace unturned.ROCKS.Votifier
                         }
                         else
                         {
-                            Logger.Log("Failed finding any rewardbundles");
+                            Logger.Log(Translate("no_rewards_found"));
                             return;
                         }
 
@@ -119,20 +137,20 @@ namespace unturned.ROCKS.Votifier
                         {
                             if (!ItemTool.tryForceGiveItem(voter.Player, reward.ItemId, reward.Amount))
                             {
-                                Logger.Log("Failed giving a item to " + voter.SteamPlayerID.CharacterName + " (" + reward.ItemId + "," + reward.Amount + ")");
+                                Logger.Log(Translate("vote_give_error_message", voter.SteamPlayerID.CharacterName, reward.ItemId, reward.Amount));
                             }
                         }
-                        RocketChatManager.Say(voter.SteamPlayerID.CharacterName + " voted on " + result.service.Name + " and received the \"" + bundle.Name + "\" bundle");
+                        RocketChatManager.Say(Translate("vote_success_message", voter.SteamPlayerID.CharacterName, result.service.Name, bundle.Name));
                         new VotifierWebclient().DownloadStringAsync(new Uri(String.Format(result.apidefinition.ReportSuccess, result.service.APIKey, result.caller.ToString())));
                         return;
                     }
                     else
                     {
-                        RocketChatManager.Say(result.caller, String.Format("You have an outstanding reward for your vote on " + result.service.Name));
+                        RocketChatManager.Say(result.caller, Translate("vote_pending_message", result.service.Name));
                         return;
                     }
                 case "2":
-                    RocketChatManager.Say(result.caller, String.Format("You have already voted for this server on " + result.service.Name + ", Thanks!"));
+                    RocketChatManager.Say(result.caller, Translate("vote_due_message", result.service.Name));
                     break;
             }
         }
