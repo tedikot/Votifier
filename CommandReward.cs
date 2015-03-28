@@ -7,18 +7,26 @@ using System.Linq;
 
 namespace unturned.ROCKS.Votifier
 {
-    class CommandReward : Command
+    class CommandReward : IRocketCommand
     {
-        public CommandReward()
+        public void Execute(Steamworks.CSteamID caller, string command)
         {
-            base.commandName = "reward";
-            base.commandHelp = "Get rewards for voting";
-            base.commandInfo = base.commandName + " - " + base.commandHelp;
+            Votifier.Vote(caller);
         }
 
-        protected override void execute(SteamPlayerID caller, string command)
+        public string Help
         {
-            Votifier.Vote(caller.CSteamID);
+            get { return "Get rewards for voting"; }
+        }
+
+        public string Name
+        {
+            get { return "reward"; }
+        }
+
+        public bool RunFromConsole
+        {
+            get { return false; }
         }
     }
 }
