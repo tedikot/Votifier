@@ -37,9 +37,9 @@ namespace unturned.ROCKS.Votifier
             }
         }
 
-        void Events_OnPlayerConnected(Player player)
+        void Events_OnPlayerConnected(RocketPlayer player)
         {
-            Vote(player.SteamChannel.SteamPlayer.SteamPlayerID.CSteamID,false);
+            Vote(player.CSteamID,false);
         }
 
         public static void Vote(CSteamID caller,bool giveItemDirectly = true)

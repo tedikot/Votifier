@@ -7,11 +7,11 @@ using System.Linq;
 
 namespace unturned.ROCKS.Votifier
 {
-    class CommandReward : IRocketCommand
+    public class CommandReward : IRocketCommand
     {
-        public void Execute(Steamworks.CSteamID caller, string command)
+        public void Execute(RocketPlayer caller, string command)
         {
-            Votifier.Vote(caller);
+            Votifier.Vote(caller.CSteamID);
         }
 
         public string Help
