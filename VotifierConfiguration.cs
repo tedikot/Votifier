@@ -8,6 +8,9 @@ namespace unturned.ROCKS.Votifier
     {
         [XmlArrayItem(ElementName = "Service")]
         public List<Service> Services;
+
+        public bool EnableRewardBundles = true;
+
         [XmlArrayItem(ElementName = "RewardBundle")]
         public List<RewardBundle> RewardBundles;
         [XmlArrayItem(ElementName = "ServiceDefinition")]
@@ -35,6 +38,7 @@ namespace unturned.ROCKS.Votifier
                     new RewardBundle() { Name="Brute Force", Rewards = new List<Reward>() { new Reward(112, 1), new Reward(113, 3), new Reward(254, 3) }, Probability = 33 },
                     new RewardBundle() { Name="Watcher", Rewards = new List<Reward>() { new Reward(109, 1), new Reward(111, 3), new Reward(236, 1) }, Probability = 33 }
                 };
+                configuration.EnableRewardBundles = true;
                 configuration.Services = new List<Service>() { new Service("unturned-servers.net"), new Service("unturnedsl.com") };
                 return configuration;
             }

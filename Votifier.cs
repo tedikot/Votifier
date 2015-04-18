@@ -17,7 +17,53 @@ namespace unturned.ROCKS.Votifier
         {
             Instance = this;
             RocketServerEvents.OnPlayerConnected += Events_OnPlayerConnected;
+            if (Configuration.EnableRewardBundles)
+            {
+                OnPlayerVoted += Votifier_OnPlayerVoted;
+            }
         }
+
+        void Votifier_OnPlayerVoted(RocketPlayer player, ServiceDefinition definition)
+        {
+            int propabilysum = Instance.Configuration.RewardBundles.Sum(p => p.Probability);
+
+            RewardBundle bundle = new RewardBundle();
+
+            if (propabilysum != 0)
+            {
+                Random r = new Random();
+
+                int i = 0, diceRoll = r.Next(0, propabilysum);
+
+                foreach (RewardBundle b in Instance.Configuration.RewardBundles)
+                {
+                    if (diceRoll > i && diceRoll <= i + b.Probability)
+                    {
+                        bundle = b;
+                        break;
+                    }
+                    i = i + b.Probability;
+                }
+            }
+            else
+            {
+                Logger.Log(Instance.Translate("no_rewards_found"));
+                return;
+            }
+
+            foreach (Reward reward in bundle.Rewards)
+            {
+                
+                if (!player.GiveItem(reward.ItemId, reward.Amount))
+                {
+                    Logger.Log(Instance.Translate("vote_give_error_message", player.CharacterName, reward.ItemId, reward.Amount));
+                }
+            }
+            RocketChatManager.Say(Instance.Translate("vote_success_message", player.CharacterName, definition.Name, bundle.Name));        
+        }
+
+        public delegate void PlayerVotedEvent(RocketPlayer player, ServiceDefinition definition);
+        public event PlayerVotedEvent OnPlayerVoted;
 
         public override Dictionary<string, string> DefaultTranslations
         {
@@ -109,40 +155,8 @@ namespace unturned.ROCKS.Votifier
                 case "1":
                     if (result.giveItemDirectly)
                     {
-                        int propabilysum = Instance.Configuration.RewardBundles.Sum(p => p.Probability);
+                        if (Instance.OnPlayerVoted != null) Instance.OnPlayerVoted(RocketPlayer.FromCSteamID(result.caller), result.apidefinition);
 
-                        RewardBundle bundle = new RewardBundle();
-
-                        if (propabilysum != 0)
-                        {
-                            Random r = new Random();
-
-                            int i = 0, diceRoll = r.Next(0, propabilysum);
-
-                            foreach (RewardBundle b in Instance.Configuration.RewardBundles)
-                            {
-                                if (diceRoll > i && diceRoll <= i + b.Probability)
-                                {
-                                    bundle = b;
-                                    break;
-                                }
-                                i = i + b.Probability;
-                            }
-                        }
-                        else
-                        {
-                            Logger.Log(Instance.Translate("no_rewards_found"));
-                            return;
-                        }
-
-                        foreach (Reward reward in bundle.Rewards)
-                        {
-                            if (!ItemTool.tryForceGiveItem(voter.Player, reward.ItemId, reward.Amount))
-                            {
-                                Logger.Log(Instance.Translate("vote_give_error_message", voter.SteamPlayerID.CharacterName, reward.ItemId, reward.Amount));
-                            }
-                        }
-                        RocketChatManager.Say(Instance.Translate("vote_success_message", voter.SteamPlayerID.CharacterName, result.service.Name, bundle.Name));
                         new VotifierWebclient().DownloadStringAsync(new Uri(String.Format(result.apidefinition.ReportSuccess, result.service.APIKey, result.caller.ToString())));
                         return;
                     }
