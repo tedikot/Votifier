@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 
 namespace unturned.ROCKS.Votifier
 {
-    public class VotifierConfiguration : RocketConfiguration
+    public class VotifierConfiguration : IRocketConfiguration
     {
         [XmlArrayItem(ElementName = "Service")]
         public List<Service> Services;
@@ -16,7 +16,7 @@ namespace unturned.ROCKS.Votifier
         [XmlArrayItem(ElementName = "ServiceDefinition")]
         public List<ServiceDefinition> ServiceDefinitions;
 
-        public RocketConfiguration DefaultConfiguration
+        public IRocketConfiguration DefaultConfiguration
         {
             get {
                 VotifierConfiguration configuration = new VotifierConfiguration();
