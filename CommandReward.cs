@@ -9,7 +9,7 @@ namespace unturned.ROCKS.Votifier
 {
     public class CommandReward : IRocketCommand
     {
-        public void Execute(RocketPlayer caller, string command)
+        public void Execute(RocketPlayer caller, params string[] command)
         {
             Votifier.Vote(caller.CSteamID);
         }
