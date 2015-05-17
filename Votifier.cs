@@ -1,7 +1,9 @@
 ﻿using Rocket;
-using Rocket.Logging;
-using Rocket.RocketAPI;
-using Rocket.RocketAPI.Events;
+using Rocket.Unturned;
+using Rocket.Unturned.Events;
+using Rocket.Unturned.Logging;
+using Rocket.Unturned.Player;
+using Rocket.Unturned.Plugins;
 using SDG;
 using Steamworks;
 using System;
@@ -59,7 +61,7 @@ namespace unturned.ROCKS.Votifier
                     Logger.Log(Instance.Translate("vote_give_error_message", player.CharacterName, reward.ItemId, reward.Amount));
                 }
             }
-            RocketChatManager.Say(Instance.Translate("vote_success_message", player.CharacterName, definition.Name, bundle.Name));        
+            RocketChat.Say(Instance.Translate("vote_success_message", player.CharacterName, definition.Name, bundle.Name));        
         }
 
         public delegate void PlayerVotedEvent(RocketPlayer player, ServiceDefinition definition);
@@ -113,7 +115,7 @@ namespace unturned.ROCKS.Votifier
                     catch (TimeoutException)
                     {
                         Logger.Log(Instance.Translate("api_down_message", service.Name));
-                        RocketChatManager.Say(caller, Instance.Translate("api_down_message", service.Name));
+                        RocketChat.Say(caller, Instance.Translate("api_down_message", service.Name));
                     }
                 }
             }
@@ -137,7 +139,7 @@ namespace unturned.ROCKS.Votifier
         {
             VoteResult v = new VoteResult() { caller = _caller, result = e.Result, apidefinition = _apidefinition, service = _service, giveItemDirectly = _giveItemDirectly };
           
-            RocketTaskManager.Enqueue(() =>
+            EnqueueTask(() =>
             {
                 handleVote(v);
             });
@@ -150,7 +152,7 @@ namespace unturned.ROCKS.Votifier
             switch (result.result)
             {
                 case "0":
-                    RocketChatManager.Say(result.caller, Instance.Translate("not_yet_voted", result.service.Name));
+                    RocketChat.Say(result.caller, Instance.Translate("not_yet_voted", result.service.Name));
                     break;
                 case "1":
                     if (result.giveItemDirectly)
@@ -162,11 +164,11 @@ namespace unturned.ROCKS.Votifier
                     }
                     else
                     {
-                        RocketChatManager.Say(result.caller, Instance.Translate("vote_pending_message", result.service.Name));
+                        RocketChat.Say(result.caller, Instance.Translate("vote_pending_message", result.service.Name));
                         return;
                     }
                 case "2":
-                    RocketChatManager.Say(result.caller, Instance.Translate("vote_due_message", result.service.Name));
+                    RocketChat.Say(result.caller, Instance.Translate("vote_due_message", result.service.Name));
                     break;
             }
         }

@@ -1,10 +1,10 @@
-﻿using Rocket.RocketAPI;
+﻿using Rocket.API;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace unturned.ROCKS.Votifier
 {
-    public class VotifierConfiguration : IRocketConfiguration
+    public class VotifierConfiguration : IRocketPluginConfiguration
     {
         [XmlArrayItem(ElementName = "Service")]
         public List<Service> Services;
@@ -16,7 +16,7 @@ namespace unturned.ROCKS.Votifier
         [XmlArrayItem(ElementName = "ServiceDefinition")]
         public List<ServiceDefinition> ServiceDefinitions;
 
-        public IRocketConfiguration DefaultConfiguration
+        public IRocketPluginConfiguration DefaultConfiguration
         {
             get {
                 VotifierConfiguration configuration = new VotifierConfiguration();

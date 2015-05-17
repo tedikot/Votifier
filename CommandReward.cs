@@ -1,6 +1,5 @@
-﻿using Rocket;
-using Rocket.RocketAPI;
-using SDG;
+﻿using Rocket.Unturned.Commands;
+using Rocket.Unturned.Player;
 using System;
 using System.Collections.Generic;
 using System.Linq;
