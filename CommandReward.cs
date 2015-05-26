@@ -23,6 +23,11 @@ namespace unturned.ROCKS.Votifier
             get { return "reward"; }
         }
 
+        public string Syntax
+        {
+            get { return ""; }
+        }
+
         public bool RunFromConsole
         {
             get { return false; }
