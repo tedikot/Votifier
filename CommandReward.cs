@@ -32,5 +32,9 @@ namespace unturned.ROCKS.Votifier
         {
             get { return false; }
         }
+
+        public List<string> Aliases {
+            get { return new List<string>(); }
+        }
     }
 }
