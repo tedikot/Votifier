@@ -34,7 +34,7 @@ namespace unturned.ROCKS.Votifier
         }
 
         public List<string> Aliases {
-            get { return new List<string>(); }
+            get { return new List<string>() { "vote" }; }
         }
     }
 }
