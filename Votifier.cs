@@ -5,6 +5,7 @@ using Rocket.Unturned.Logging;
 using Rocket.Unturned.Player;
 using Rocket.Unturned.Plugins;
 using SDG;
+using SDG.Unturned;
 using Steamworks;
 using System;
 using System.Collections.Generic;
