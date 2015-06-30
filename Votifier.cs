@@ -150,6 +150,10 @@ namespace unturned.ROCKS.Votifier
 
             SteamPlayer voter = PlayerTool.getSteamPlayer(result.caller);
 
+#if DEBUG
+            Console.WriteLine("Webserver returns: " +result.result);
+#endif
+
             switch (result.result)
             {
                 case "0":

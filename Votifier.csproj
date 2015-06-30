@@ -18,8 +18,7 @@
     <DebugType>none</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\..\Desktop\Unturned\Servers\test\Rocket\Plugins\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>
