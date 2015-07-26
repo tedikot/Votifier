@@ -1,4 +1,5 @@
-﻿using Rocket.Unturned.Commands;
+﻿using Rocket.API;
+using Rocket.Unturned.Commands;
 using Rocket.Unturned.Player;
 using System;
 using System.Collections.Generic;
@@ -8,9 +9,9 @@ namespace unturned.ROCKS.Votifier
 {
     public class CommandReward : IRocketCommand
     {
-        public void Execute(RocketPlayer caller, params string[] command)
+        public void Execute(IRocketPlayer caller, params string[] command)
         {
-            Votifier.Vote(caller.CSteamID);
+            Votifier.Vote((UnturnedPlayer)caller);
         }
 
         public string Help
@@ -28,13 +29,21 @@ namespace unturned.ROCKS.Votifier
             get { return ""; }
         }
 
-        public bool RunFromConsole
+        public bool AllowFromConsole
         {
             get { return false; }
         }
 
         public List<string> Aliases {
             get { return new List<string>() { "vote" }; }
+        }
+        
+        public List<string> Permissions
+        {
+            get
+            {
+                return new List<string>() { "votifier.reward" };
+            }
         }
     }
 }
