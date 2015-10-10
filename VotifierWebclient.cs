@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace unturned.ROCKS.Votifier
+namespace fr34kyn01535.Votifier
 {
     public class VotifierWebclient : WebClient
     {

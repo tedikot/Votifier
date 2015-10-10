@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace unturned.ROCKS.Votifier
+namespace fr34kyn01535.Votifier
 {
     public class CommandReward : IRocketCommand
     {
