@@ -19,13 +19,23 @@ namespace fr34kyn01535.Votifier
         protected override void Load()
         {
             Instance = this;
-            U.Events.OnPlayerConnected += (UnturnedPlayer player) =>
-            {
-                Vote(player, false);
-            };
+            U.Events.OnPlayerConnected += voteTrigger;
             if (Configuration.Instance.EnableRewardBundles)
             {
                 OnPlayerVoted += Votifier_OnPlayerVoted;
+            }
+        }
+        
+        private void voteTrigger(UnturnedPlayer player){
+                Vote(player, false);
+        }
+        
+        protected override void Unload()
+        {
+            U.Events.OnPlayerConnected -= voteTrigger;
+            if (Configuration.Instance.EnableRewardBundles)
+            {
+                OnPlayerVoted -= Votifier_OnPlayerVoted;
             }
         }
 
