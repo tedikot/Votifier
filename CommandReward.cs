@@ -29,11 +29,6 @@ namespace fr34kyn01535.Votifier
             get { return ""; }
         }
 
-        public bool AllowFromConsole
-        {
-            get { return false; }
-        }
-
         public List<string> Aliases {
             get { return new List<string>() { "vote" }; }
         }
@@ -44,6 +39,12 @@ namespace fr34kyn01535.Votifier
             {
                 return new List<string>() { "votifier.reward" };
             }
+        }
+
+
+        public AllowedCaller AllowedCaller
+        {
+            get { return Rocket.API.AllowedCaller.Player; }
         }
     }
 }
