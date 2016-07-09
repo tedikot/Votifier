@@ -35,6 +35,11 @@ namespace fr34kyn01535.Votifier
                         CheckHasVoted = "http://unturnedsl.com/api/dedicated/{0}/{1}",
                         ReportSuccess = "http://unturnedsl.com/api/dedicated/post/{0}/{1}"
                     }
+                    , new ServiceDefinition() {
+                        Name = "observatory.rocketmod.net",
+                        CheckHasVoted = "http://api.observatory.rocketmod.net/?server={0}&steamid={1}",
+                        ReportSuccess = "http://api.observatory.rocketmod.net/?server={0}&steamid={1}&claim"
+                    }
                 };
             RewardBundles = new List<RewardBundle>() {
                 new RewardBundle() { Name="Survival", Rewards = new List<Reward>() { new Reward(245, 1), new Reward(81, 2), new Reward(16, 1) }, Probability = 33 },
