@@ -27,8 +27,8 @@ namespace fr34kyn01535.Votifier
             ServiceDefinitions = new List<ServiceDefinition>() {
                     new ServiceDefinition() {
                         Name = "unturned-servers.net",
-                        CheckHasVoted = "http://unturned-servers.net/api/?object=votes&element=claim&key={0}&steamid={1}",
-                        ReportSuccess ="http://unturned-servers.net/api/?action=post&object=votes&element=claim&key={0}&steamid={1}"
+                        CheckHasVoted = "https://unturned-servers.net/api/?object=votes&element=claim&key={0}&steamid={1}",
+                        ReportSuccess ="https://unturned-servers.net/api/?action=post&object=votes&element=claim&key={0}&steamid={1}"
                     }
                     , new ServiceDefinition() {
                         Name = "unturnedsl.com",
