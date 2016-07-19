@@ -22,7 +22,7 @@ namespace fr34kyn01535.Votifier
 
         public void LoadDefaults()
         {
-            Services = new List<Service>() { new Service("unturned-servers.net"), new Service("unturnedsl.com") };
+            Services = new List<Service>() { new Service("unturned-servers.net"), new Service("unturnedsl.com"), new Service("obs.erve.me") };
             EnableRewardBundles = true;
             ServiceDefinitions = new List<ServiceDefinition>() {
                     new ServiceDefinition() {
@@ -36,7 +36,7 @@ namespace fr34kyn01535.Votifier
                         ReportSuccess = "http://unturnedsl.com/api/dedicated/post/{0}/{1}"
                     }
                     , new ServiceDefinition() {
-                        Name = "observatory.rocketmod.net",
+                        Name = "obs.erve.me",
                         CheckHasVoted = "http://api.observatory.rocketmod.net/?server={0}&steamid={1}",
                         ReportSuccess = "http://api.observatory.rocketmod.net/?server={0}&steamid={1}&claim"
                     }
